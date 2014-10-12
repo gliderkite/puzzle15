@@ -1,2 +1,5 @@
 ## OS X proprietary formats
 *.DS_Store
+
+#python specific
+*.pyc
