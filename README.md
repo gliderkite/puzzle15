@@ -25,7 +25,7 @@ Once you have correctly installed wxPython you can simply run the script by typi
 
 Use the puzzle15 module
 ======
-If you just want to use the puzzle15 module, that allows you to solve the puzzle, you have to
+If you just want to use the `puzzle15` module, that allows you to solve the puzzle, you have to
 ```python
 import puzzle15
 ```
@@ -49,4 +49,4 @@ display = lambda s: print(s)
 # solve the puzzle and call "display" every time new solution is found
 steps = puzzle15.solve(puzzle, solutionFound=display)
 ```
-If the lower bound specified is equal to -1 the function solve returns the first solution found.
+If the lower bound specified is equal to -1 the function `solve` returns the first solution found.
