@@ -1,30 +1,33 @@
-puzzle15
-======
+# puzzle15
 A Python module that allows to solve the [15-puzzle](http://en.wikipedia.org/wiki/15_puzzle).
 
 
-How to Play
-======
+## How to Play
 The 15-puzzle is a sliding puzzle that consists of a frame of numbered square tiles in random order with one tile missing. The puzzle also exists in other sizes, particularly the smaller 8-puzzle.
 The object of the puzzle is to place the tiles in order by making sliding moves that use the empty space.
 
 ![puzzle15 image](http://i59.tinypic.com/106zsli.jpg)
 
 
-Requirements
-======
+## Requirements
 In order to play the 15-puzzle you have to download and install [Python (2.X version)](https://www.python.org/downloads/) and the [wxPython](http://www.wxpython.org/download.php) GUI library.
 
 
-Launch the game
-======
+## Launch the game
 Once you have correctly installed wxPython you can simply run the script by typing (on Unix-based systems):
 ```bash
 ./wxPuzzle15.py
 ```
+You can also play with other types of board by adding the board's size as command argument:
+```bash
+./wxPuzzle15.py 8
+```
+![puzzle15 image](http://i62.tinypic.com/mvp5rn.jpg)
 
-Use the puzzle15 module
-======
+The only valid configurations are: 15, 8 and 3.
+
+
+## Use the puzzle15 module
 If you just want to use the `puzzle15` module, that allows you to solve the puzzle, you have to
 ```python
 import puzzle15
@@ -50,3 +53,18 @@ display = lambda s: print(s)
 steps = puzzle15.solve(puzzle, solutionFound=display)
 ```
 If the lower bound specified is equal to -1 the function `solve` returns the first solution found.
+
+You can solve custom puzzles by checking first if the puzzle is solvable:
+```python
+# create a custom 8-puzzle
+puzzle = [7, 5, 9, 8, 1, 2, 3, 6, 4]
+# solve the puzzle only if it is solvable
+if puzzle15.is_solvable(puzzle):
+  steps = puzzle15.solve(puzzle)
+```
+
+The algorithm used to find an optimal solution is "quite" simple:
+
+1. Find a first solution using [heuristic](http://en.wikipedia.org/wiki/Heuristic_(computer_science))
+2. Store the best solution every time a new solution is found.
+3. Iterate over all possible configuration stored in a priority queue (sorted by the current configuration "distance" from the solved configuration of the puzzle), by adding a new configurations only if it is possible to reach a better solution from these.
