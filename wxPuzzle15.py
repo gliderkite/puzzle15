@@ -46,11 +46,13 @@ class BoardFrame(wx.Frame):
     self.statusbar.SetFieldsCount(2)
     # add a toolbar
     self.toolbar = self.CreateToolBar()
-    img = wx.Image('shuffle.png', wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+    img = wx.Image('shuffle.png', wx.BITMAP_TYPE_ANY)
+    img = img.Scale(40, 40, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
     self.SHUFFLE_ID = 1
     item = self.toolbar.AddSimpleTool(self.SHUFFLE_ID, img, 'Shuffle')
     self.Bind(wx.EVT_MENU, self.OnShuffle, item)
-    img = wx.Image('solve.png', wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+    img = wx.Image('solve.png', wx.BITMAP_TYPE_ANY)
+    img = img.Scale(40, 40, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
     self.SOLVE_ID = 2
     item = self.toolbar.AddSimpleTool(self.SOLVE_ID, img, 'Solve')
     self.Bind(wx.EVT_MENU, self.OnSolve, item)
