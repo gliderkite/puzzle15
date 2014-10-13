@@ -67,4 +67,4 @@ The algorithm used to find an optimal solution is "quite" simple:
 
 1. Find a first solution using [heuristic](http://en.wikipedia.org/wiki/Heuristic_(computer_science))
 2. Store the best solution every time a new solution is found.
-3. Iterate over all possible configuration stored in a priority queue (sorted by the current configuration "distance" from the solved configuration of the puzzle), by adding a new configurations only if it is possible to reach a better solution from these.
+3. Iterate over all possible configuration stored in a priority queue (sorted by the current configuration "distance" from the solved configuration of the puzzle), by adding new configurations only if it is possible to reach a better solution from these.
