@@ -54,7 +54,7 @@ steps = puzzle15.solve(puzzle, solutionFound=display)
 ```
 If the lower bound specified is equal to -1 the function `solve` returns the first solution found.
 
-You can solve custom puzzles by checking first if the puzzle is solvable:
+You can solve custom puzzles by checking first if the puzzle is [solvable](http://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html):
 ```python
 # create a custom 8-puzzle
 puzzle = [7, 5, 9, 8, 1, 2, 3, 6, 4]
