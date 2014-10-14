@@ -4,13 +4,7 @@
 from random import shuffle
 from math import sqrt
 from functools import total_ordering
-
-try:
-  from queue import PriorityQueue
-except ImportError:
-  # python 2.X
-  from Queue import PriorityQueue
-
+from heapq import heappop, heappush
 
 
 
@@ -440,12 +434,12 @@ def solve(puzzle, solutionFound=None, lowerBound=None):
     if lowerBound == -1:
       return bestSteps
   # init the frontier with the original puzzle
-  frontier = PriorityQueue()
-  frontier.put(Puzzle(puzzle, [], manhattan_dist(puzzle)))
+  frontier = []
+  heappush(frontier, Puzzle(puzzle, [], manhattan_dist(puzzle)))
   # add new steps while the frontier is not empty
-  while not frontier.empty():
+  while frontier:
     # get the next puzzle configuration
-    currState = frontier.get()
+    currState = heappop(frontier)
     # check if the puzzle is solved
     if is_solved(currState.puzzle):
       # callback for the new solution
@@ -464,7 +458,7 @@ def solve(puzzle, solutionFound=None, lowerBound=None):
       priority = _compute_priority(currState.puzzle, move, currState.priority)
       # add the new configuration only if we can reach a better solution
       if not bestSteps or (len(currState.steps) + 1 + priority) < len(bestSteps):
-        frontier.put(currState.apply_move(move, priority))
+        heappush(frontier, currState.apply_move(move, priority))
   # search is over, returns the best steps found
   return bestSteps
 
