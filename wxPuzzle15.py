@@ -41,31 +41,57 @@ class BoardFrame(wx.Frame):
       self.size = 2
     else:
       raise ValueError('Invalid puzzle')
-    # add a statusbar
+    # init properties
+    self.SHUFFLE_ID = 1
+    self.SOLVE_ID = 2
+    # init widget
+    self.InitMenu()
+    self.InitStatusbar()
+    self.InitToolbar()
+    self.InitBoard()
+    # event binding
+    self.Bind(wx.EVT_CHAR_HOOK, self.OnKeyDown)
+
+
+  def InitStatusbar(self):
+    """Create and initialized the statusbar."""
     self.statusbar = self.CreateStatusBar()
     self.statusbar.SetFieldsCount(2)
-    # add a toolbar
+
+  def InitToolbar(self):
+    """Create and initialized the statusbar."""
     self.toolbar = self.CreateToolBar()
     img = wx.Image('shuffle.png', wx.BITMAP_TYPE_ANY)
     img = img.Scale(40, 40, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-    self.SHUFFLE_ID = 1
     item = self.toolbar.AddSimpleTool(self.SHUFFLE_ID, img, 'Shuffle')
     self.Bind(wx.EVT_MENU, self.OnShuffle, item)
     img = wx.Image('solve.png', wx.BITMAP_TYPE_ANY)
     img = img.Scale(40, 40, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-    self.SOLVE_ID = 2
     item = self.toolbar.AddSimpleTool(self.SOLVE_ID, img, 'Solve')
     self.Bind(wx.EVT_MENU, self.OnSolve, item)
     self.toolbar.Realize()
-    # add the board
+
+  def InitMenu(self):
+    """Create and initializes the menu."""
+    menubar = wx.MenuBar()
+    self.filemenu = wx.Menu()
+    menuItem = self.filemenu.Append(self.SHUFFLE_ID, 'Shuffle')
+    self.Bind(wx.EVT_MENU, self.OnShuffle, menuItem)
+    menuItem = self.filemenu.Append(self.SOLVE_ID, 'Solve')
+    self.Bind(wx.EVT_MENU, self.OnSolve, menuItem)
+    self.filemenu.AppendSeparator()
+    menuItem = self.filemenu.Append(wx.NewId(), '&Quit')
+    self.Bind(wx.EVT_MENU, self.OnExit, menuItem)
+    menubar.Append(self.filemenu, '&File')
+    self.SetMenuBar(menubar)
+
+  def InitBoard(self):
+    """Create and initializes the game's board."""
     self.sizer = wx.GridSizer(rows=self.size, cols=self.size, hgap=5, vgap=5)
     self.FillBoard()
     self.SetSizerAndFit(self.sizer)
     self.SetMinSize(self.GetClientSize())
     self.SetMaxSize((500, 500))
-    # event binding
-    self.Bind(wx.EVT_CHAR_HOOK, self.OnKeyDown)
-
 
   def Swap(self, loc, layout=True):
     """Swap the cell in location with the empty cell."""
@@ -125,10 +151,12 @@ class BoardFrame(wx.Frame):
     self.sizer.Layout()
     self.UpdateStatusBar()
 
-  def EnableToolbar(self):
+  def Active(self, enable=True):
     """Enable toolbar items."""
-    self.toolbar.EnableTool(self.SHUFFLE_ID, True)
-    self.toolbar.EnableTool(self.SOLVE_ID, True)
+    self.toolbar.EnableTool(self.SHUFFLE_ID, enable)
+    self.toolbar.EnableTool(self.SOLVE_ID, enable)
+    self.filemenu.FindItemById(self.SHUFFLE_ID).Enable(enable)
+    self.filemenu.FindItemById(self.SOLVE_ID).Enable(enable)
 
 
   def OnKeyDown(self, event):
@@ -163,16 +191,18 @@ class BoardFrame(wx.Frame):
     if steps:
       time = 10
       elapsed = time + 250 * len(steps)
-      # disable toolbar while solving
-      self.toolbar.EnableTool(self.SHUFFLE_ID, False)
-      self.toolbar.EnableTool(self.SOLVE_ID, False)
+      # disable toolbar and menu while solving
+      self.Active(enable=False)
       # simulate animation
       for loc in [x for x, y in steps]:
         wx.CallLater(time, self.Swap, loc)
         time += 250
-      # enable toolbar items after simulation
-      wx.CallLater(elapsed, self.EnableToolbar)
+      # enable toolbar/menu items after simulation
+      wx.CallLater(elapsed, self.Active)
 
+  def OnExit(self, event):
+    """Close the frame."""
+    self.Destroy()
 
 
 class PuzzleApp(wx.App):

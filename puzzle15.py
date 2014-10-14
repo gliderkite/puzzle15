@@ -391,17 +391,15 @@ class Puzzle:
   
   def valid_moves(self):
     """Return a list of possible moves."""
-    moves = []
     empty = self.puzzle.index(len(self.puzzle))
     # get all the neighbors of the empty cell
     for n in _neighbors(self.puzzle, empty):
       step = (n, empty)
       if step != self.lastStep:
-        moves.append(step)
-    return moves
+        yield step
 
   def apply_move(self, move, priority):
-    """Apply the move to the current puzzle."""
+    """Apply the move to the current puzzle and return the new configuration."""
     puzzle = list(self.puzzle)
     steps = list(self.steps)
     x, y = move
@@ -461,6 +459,8 @@ def solve(puzzle, solutionFound=None, lowerBound=None):
     # iterate over all possible moves
     for move in currState.valid_moves():
       # compute the priority of the puzzle after the move
+      # the priority represents the minimum number of steps required
+      # in order to reach the final configuration (the solved puzzle)
       priority = _compute_priority(currState.puzzle, move, currState.priority)
       # add the new configuration only if we can reach a better solution
       if not bestSteps or (len(currState.steps) + 1 + priority) < len(bestSteps):
