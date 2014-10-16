@@ -235,39 +235,41 @@ def _place_6(puzzle8, moves):
 
 
 def solve8_heuristic(puzzle8):
-  """Solve a 8 puzzle."""
+  """Solve a 8 puzzle using heuristic."""
   # check the size of the puzzle
   if len(puzzle8) != 9:
     raise ValueError('Invalid size')
   # check if the puzzle is solvable
-  if not is_solvable(puzzle8):
+  if not is_solvable(puzzle8) or is_solved(puzzle8):
     return None
   moves = []
+  p8 = list(puzzle8)
   # place one piece after the other
-  _place(puzzle8, moves, 1)
-  _place(puzzle8, moves, 2)
-  _place_3(puzzle8, moves)
-  _place(puzzle8, moves, 4)
-  _place_5(puzzle8, moves)
-  _place_6(puzzle8, moves)
-  _place(puzzle8, moves, 7)
-  _place(puzzle8, moves, 8)
-  return moves if is_solved(puzzle8) else None
+  _place(p8, moves, 1)
+  _place(p8, moves, 2)
+  _place_3(p8, moves)
+  _place(p8, moves, 4)
+  _place_5(p8, moves)
+  _place_6(p8, moves)
+  _place(p8, moves, 7)
+  _place(p8, moves, 8)
+  return tuple(moves) if is_solved(p8) else None
 
 
-def solve4_heuristic(puzzle4):
-  """Solve a 4 puzzle."""
+def solve3_heuristic(puzzle3):
+  """Solve a 3 puzzle using heuristic."""
   # check the size of the puzzle
-  if len(puzzle4) != 4:
+  if len(puzzle3) != 4:
     raise ValueError('Invalid size')
   # check if the puzzle is solvable
-  if not is_solvable(puzzle4):
+  if not is_solvable(puzzle3) or is_solved(puzzle3):
     return None
   moves = []
+  p3 = list(puzzle3)
   # place one piece after the other
   for i in [1, 2, 3]:
-    _place(puzzle4, moves, i)
-  return moves if is_solved(puzzle4) else None
+    _place(p3, moves, i)
+  return tuple(moves) if is_solved(p3) else None
 
 
 def _place_13(puzzle15, moves):
@@ -330,31 +332,36 @@ def _puzzle15(puzzle15, moves, puzzle8, moves8):
     moves.append((pos(m[0]), pos(m[1])))
 
 
-def solve15_heuristic(puzzle15):
+def solve15_heuristic(puzzle15, subOpt=False):
+  """Solve a 15 puzzle using heuristic."""
+  # check the size of the puzzle
+  if len(puzzle15) != 16:
+    raise ValueError('Invalid size')
   # check if the puzzle is solvable
-  if not is_solvable(puzzle15):
+  if not is_solvable(puzzle15) or is_solved(puzzle15):
     return False
   moves = []
   immovables = set()
+  p15 = list(puzzle15)
   # place the first row
   for p in [1, 2, 3]:
     immovables.add(p)
-    _place(puzzle15, moves, p, immovables)
-  _place_4(puzzle15, moves)
+    _place(p15, moves, p, immovables)
+  _place_4(p15, moves)
   # place the first column
   for p in [5, 9]:
     immovables.add(p)
-    _place(puzzle15, moves, p, immovables)
-  _place_13(puzzle15, moves)
+    _place(p15, moves, p, immovables)
+  _place_13(p15, moves)
   # build and solve the sub-puzzle 8
-  p8 = _puzzle8(puzzle15)
-  m8 = solve8_heuristic(p8)
+  p8 = _puzzle8(p15)
+  m8 = solve(p8) if subOpt else solve8_heuristic(p8)
   if not m8:
-    return False
-  # fill the puzzle 15
-  _puzzle15(puzzle15, moves, p8, m8)
+    return None
+  # fill the puzzle 15, here the 8 puzzle must be solved by using m8 steps
+  _puzzle15(p15, moves, range(1, 10), m8)
   # return moves if the puzzle is solved, None otherwise
-  return moves if is_solved(puzzle15) else None
+  return tuple(moves) if is_solved(p15) else None
 
 
 
@@ -420,18 +427,20 @@ def solve(puzzle, solutionFound=None, lowerBound=None):
   # check if the puzzle is solvable
   if not is_solvable(puzzle) or is_solved(puzzle):
     return None
-  # compute a first heuristc solution
+  # compute a first heuristic solution
   if len(puzzle) == 16:
-    bestSteps = solve15_heuristic(list(puzzle))
+    bestSteps = solve15_heuristic(puzzle, subOpt=True)
   elif len(puzzle) == 9:
-    bestSteps = solve8_heuristic(list(puzzle))
+    bestSteps = solve8_heuristic(puzzle)
+  elif len(puzzle) == 4:
+    bestSteps = solve3_heuristic(puzzle)
   else:
     bestSteps = None
   # print and/or return the first solution
   if bestSteps:
     if solutionFound:
       solutionFound(tuple(bestSteps))
-    if lowerBound == -1:
+    if lowerBound and (lowerBound == -1 or len(bestSteps) <= lowerBound):
       return bestSteps
   # init the frontier with the original puzzle
   frontier = []
