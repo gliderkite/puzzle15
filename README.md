@@ -52,7 +52,13 @@ display = lambda s: print(s)
 # solve the puzzle and call "display" every time new solution is found
 steps = puzzle15.solve(puzzle, solutionFound=display)
 ```
-If the lower bound specified is equal to -1 the function `solve` returns the first solution found.
+If the lower bound specified is equal to -1 the function `solve` returns the first solution found. Actually the first solution is computed by using heuristic; you can also use these specific functions in order to obtain faster a solution:
+```python
+# create a solvable 15-puzzle and solve it by using heuristic
+puzzle = puzzle15.spuzzle(size=4)
+steps = puzzle15.solve15_heuristic(puzzle)
+```
+8-puzzle and 3-puzzle versions are available too.
 
 You can solve custom puzzles by checking first if the puzzle is [solvable](http://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html):
 ```python
