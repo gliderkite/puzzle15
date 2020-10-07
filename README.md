@@ -6,7 +6,7 @@ A Python module that allows to solve the [15-puzzle](http://en.wikipedia.org/wik
 The 15-puzzle is a sliding puzzle that consists of a frame of numbered square tiles in random order with one tile missing. The puzzle also exists in other sizes, particularly the smaller 8-puzzle.
 The object of the puzzle is to place the tiles in order by making sliding moves that use the empty space.
 
-![puzzle15 image](http://i59.tinypic.com/106zsli.jpg)
+![puzzle15 image](assets/puzzle15.gif)
 
 
 ## Requirements
@@ -22,7 +22,7 @@ You can also play with other types of board by adding the board's size as comman
 ```bash
 ./wxPuzzle15.py 8
 ```
-![puzzle15 image](http://i62.tinypic.com/mvp5rn.jpg)
+![puzzle15 image](assets/puzzle8.gif)
 
 The only valid configurations are: 15, 8 and 3.
 
